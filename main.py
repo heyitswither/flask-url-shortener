@@ -174,7 +174,7 @@ def short_url_handler(short_url_request):
   else:
     return redirect(get_long_url(short_url_request))
 
-@app.reoute('/preview/<short_url_request>')
+@app.route('/preview/<short_url_request>')
 def short_url_preview(short_url_request):
   if not short_code_exists(short_url_request):
     return abort(404)
