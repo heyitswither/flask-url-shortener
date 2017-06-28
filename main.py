@@ -1,6 +1,7 @@
 from flask import Flask, abort, redirect, render_template, render_template_string, request, Markup
 import json
 import random
+import ssl
 
 app = Flask(__name__)
 validChars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
@@ -124,5 +125,8 @@ def short_url_handler(short_url_request):
   return redirect(get_long_url(short_url_request))
 
 if __name__ == '__main__':
+  context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+  context.load_cert_chain('/etc/letsencrypt/live/vps2.heyitswither.ml/cert.pem', '/etc/letsencrypt/live/vps2.heyitswither.ml/privkey.pem')
+  /etc/letsencrypt/live/vps2.heyitswither.ml
   urls_file_exists()
-  app.run(debug=True, host='0.0.0.0', port=8080)
+  app.run(debug=True, host='0.0.0.0', port=8080, ssl_context=context)
