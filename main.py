@@ -118,7 +118,7 @@ def new_url_page():
 
 @app.route('/<short_url>')
 def short_url_handler(short_url):
-  if not code_exists(short_url):
+  if not short_code_exists(short_url):
     return abort(404)
   redirect(get_long_url(short_url))
 
