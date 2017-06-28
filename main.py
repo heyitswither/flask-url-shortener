@@ -4,6 +4,7 @@ import random
 import ssl
 
 app = Flask(__name__)
+httpapp = Flask(__name__)
 validChars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 
 BASE62 = "23456789abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
@@ -107,6 +108,16 @@ def before_request():
     url = request.url.replace('http://', 'https://', 1)
     return redirect(url)
 
+@httpapp.before_request
+def http_before_request():
+  url = request.url.replace('http://', 'https://', 1)
+  return redirect(url)
+
+@httpapp.route
+def http_index():
+  url = request.url.replace('http://', 'https://', 1)
+  return redirect(url)
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
   if request.method == 'GET':
@@ -139,3 +150,4 @@ if __name__ == '__main__':
   context.load_cert_chain('/etc/letsencrypt/live/vps2.heyitswither.ml/cert.pem', '/etc/letsencrypt/live/vps2.heyitswither.ml/privkey.pem')
   urls_file_exists()
   app.run(debug=True, host='0.0.0.0', port=443, ssl_context=context)
+  httpapp.run(debu=True, host='0.0.0.0', port=80)
