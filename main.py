@@ -100,21 +100,20 @@ def create_custom_url(short_url, long_url): # Creates custom short links, requir
   save_urls_file()
   return 'Url successfully created\n{} ==> {}'.format(short_url, long_url)
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-  return render_template('index.html')
-
-@app.route('/new', methods=["POST"])
-def new_url_page():
-  custom_url = dict(request.form)['custom_url'][0]
-  long_url = dict(request.form)['long_url'][0]
-  if not custom_url == "":
-    new_url_response = create_custom_url(custom_url, long_url)
-  elif custom_url == "":
-    new_url_response = create_url(long_url)
-  else:
-    new_url_response = 'There was an error'
-  return render_template_string('new.html', new_url_response=new_url_response)
+  if request.method == 'get':
+    return render_template('index.html')
+  elif request.method == 'post':
+    custom_url = dict(request.form)['custom_url'][0]
+    long_url = dict(request.form)['long_url'][0]
+    if not custom_url == "":
+      new_url_response = create_custom_url(custom_url, long_url)
+    elif custom_url == "":
+      new_url_response = create_url(long_url)
+    else:
+      new_url_response = 'There was an error'
+    return render_template_string('new.html', new_url_response=new_url_response)
 
 @app.route('/<short_url>')
 def short_url_handler(short_url):
