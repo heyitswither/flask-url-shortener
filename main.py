@@ -105,13 +105,13 @@ def create_custom_url(request, short_url, long_url): # Creates custom short link
   global store_dict
   global validChars
   if short_code_exists(short_url):
-    return Markup('That url is taken by <a href="{0}">{0}</a>'.format(get_long_url(short_url)))
+    return False
   for letter in short_url:
     if not letter in validChars:
-      return 'Invalid short code'
+      return False
   store_dict['urls'].append({short_url: long_url})
   save_urls_file()
-  return Markup('Url successfully created\n<a href="{0}">{0}</a> ==> <a href = "{1}">{1}</a>'.format(request.url_root + short_url, long_url))
+  return True
 
 @app.before_request
 def before_request():
@@ -136,30 +136,6 @@ def index():
   elif request.method == 'POST':
     custom_url = dict(request.form)['custom_url'][0]
     long_url = dict(request.form)['long_url'][0]
-    if long_url == "" and short_code_exists(custom_url):
-      new_url_response = Markup('<a href="{0}">{0}</a> ==> <a href="{1}">{1}</a>'.format(request.url_root + custom_url, get_long_url(custom_url)))
-    elif long_url == "" and not short_code_exists(custom_url):
-      new_url_response = 'You cannot leave the long URL field empty!'
-    elif not custom_url == "":
-      if not long_url.startswith('http://') or not long_url.startswith('https://'):
-        long_url = "http://" + long_url
-      if not valid_url(long_url):
-        new_url_response = 'Invalid long URL'
-      else:
-        new_url_response = create_custom_url(request, custom_url, long_url)
-        if not short_code_exists(custom_url):
-          print("New URL {} ==> {}".format(custom_url, long_url))
-    elif custom_url == "":
-      if not long_url.startswith('http://') or not long_url.startswith('https://'):
-        long_url = "http://" + long_url
-      if not valid_url(long_url):
-        new_url_response = 'Invalid long URL'
-      elif long_url.split('/')[2] == '/'.join(request.url_root.split('/')[:3]):
-        new_url_response = 'Invalid long URL'
-      else:
-        new_url = create_url(long_url)
-        new_url_response = Markup('<a href="{0}">{0}</a> ==> <a href="{1}">{1}</a>'.format(request.url_root + new_url, long_url))
-        print("New URL {} ==> {}".format(new_url, long_url))
     if 'previewsEnabled' in request.cookies:
       if request.cookies.get('previewsEnabled') == "true":
         previews_status = "on"
@@ -170,7 +146,39 @@ def index():
     else:
       previews_status = "off"
       opposite_status = "on"
-    return render_template('new.html', new_url_response=new_url_response, previews_status=previews_status, opposite_status=opposite_status)
+    if long_url == "" and not short_code_exists(custom_url):
+      response = 'You cannot leave the long URL field empty!'
+      return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
+    elif not custom_url == "":
+      if not long_url.startswith('http://') or not long_url.startswith('https://'):
+        long_url = "http://" + long_url
+      if not valid_url(long_url):
+        response = 'Invalid long URL'
+        return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
+      else:
+        if short_code_exists(custom_url):
+          response = 'That short URL is already taken'
+          return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
+        else:
+          if create_custom_url(request, custom_url, long_url):
+            print("New URL {} ==> {}".format(custom_url, long_url))
+            new_url = custom_url
+          else:
+            reponse = 'Short code is invalid or already in use'
+            return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
+    elif custom_url == "":
+      if not long_url.startswith('http://') or not long_url.startswith('https://'):
+        long_url = "http://" + long_url
+      if not valid_url(long_url):
+        response = 'Invalid long URL'
+        return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
+      elif long_url.split('/')[2] == '/'.join(request.url_root.split('/')[:3]):
+        response = 'Invalid long URL'
+        return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
+      else:
+        new_url = create_url(long_url)
+        print("New URL {} ==> {}".format(new_url, long_url))
+    return render_template('new.html', new_url=request.url_root + new_url, old_url=get_long_url(short_url_request), previews_status=previews_status, opposite_status=opposite_status)
 
 @app.route('/<short_url_request>')
 def short_url_handler(short_url_request):
@@ -185,7 +193,6 @@ def short_url_handler(short_url_request):
 def short_url_preview(short_url_request):
   if not short_code_exists(short_url_request):
     return abort(404)
-  new_url_response = Markup('<a href="{0}">{0}</a> ==> <a href="{1}">{1}</a>'.format(request.url_root + short_url_request, get_long_url(short_url_request)))
   if 'previewsEnabled' in request.cookies:
     if request.cookies.get('previewsEnabled') == "true":
       previews_status = "on"
@@ -196,21 +203,21 @@ def short_url_preview(short_url_request):
   else:
     previews_status = "off"
     opposite_status = "on"
-  return render_template('new.html', new_url_response=new_url_response, previews_status=previews_status, opposite_status=opposite_status)
+  return render_template('new.html', new_url=request.url_root + short_url_request, old_url=get_long_url(short_url_request), previews_status=previews_status, opposite_status=opposite_status)
 
 @app.route('/preview-toggle/')
 def preview_toggle():
   if "previewsEnabled" in request.cookies and request.cookies.get('previewsEnabled') == "true":
-    new_url_response = 'Previews have been disabled'
-    resp = make_response(render_template('new.html', new_url_response=new_url_response, previews_status='off', opposite_status='on'))
+    response = 'Previews have been disabled'
+    resp = make_response(render_template('previews.html', response=response, previews_status='off', opposite_status='on'))
     resp.set_cookie('previewsEnabled', 'false')
   elif "previewsEnabled" in request.cookies and request.cookies.get('previewsEnabled') == "false":
-    new_url_response = 'Previews have been enabled'
-    resp = make_response(render_template('new.html', new_url_response=new_url_response, previews_status='on', opposite_status='off'))
+    response = 'Previews have been enabled'
+    resp = make_response(render_template('previews.html', response=response, previews_status='on', opposite_status='off'))
     resp.set_cookie('previewsEnabled', 'true')
   else:
-    new_url_response = 'Previews have been enabled'
-    resp = make_response(render_template('new.html', new_url_response=new_url_response, previews_status='on', opposite_status='off'))
+    response = 'Previews have been enabled'
+    resp = make_response(render_template('previews.html', response=response, previews_status='on', opposite_status='off'))
     resp.set_cookie('previewsEnabled', 'true')
   return resp
 
