@@ -25,6 +25,7 @@ def encode(num, alphabet=BASE62):
   return ''.join(arr)
 
 def urls_file_exists(): # Imports storage file, or creates in not found
+  global store_dict
   try:
     with open('storage.json', 'r') as fileIn:
       store_dict = json.load(fileIn)
@@ -35,10 +36,12 @@ def urls_file_exists(): # Imports storage file, or creates in not found
       store_dict = store_temp
 
 def save_urls_file(): # Saves storage dict to file
+  global store_dict
   with open('urls.json', 'w') as fileOut:
-    json.dump(urls_dict, fileOut, indent=2, sort_keyes=True)
+    json.dump(store_dict, fileOut, indent=2, sort_keyes=True)
 
 def short_code_exists(short_code): # Check if a short code exists, requires short_code, returns bool
+  global store_dict
   for url_dict in store_dict['urls']:
     for key in url_dict:
       if key == short_code:
@@ -46,6 +49,7 @@ def short_code_exists(short_code): # Check if a short code exists, requires shor
   return False
 
 def long_url_exists(long_url): # Check if a long url exists, requires long url, returns bool
+  global store_dict
   for url_dict in store_dict['urls']:
     for key in url_dict:
       if url_dict[key] == long_url:
@@ -53,6 +57,7 @@ def long_url_exists(long_url): # Check if a long url exists, requires long url, 
   return False
 
 def get_long_url(short_code): # Gets a long url, requires short_code, returns str long_url
+  global store_dict
   for url_dict in store_dict['urls']:
     for key in url_dict:
       if key == short_code:
@@ -60,6 +65,7 @@ def get_long_url(short_code): # Gets a long url, requires short_code, returns st
   return 'Url not found'
 
 def get_short_url(long_url): # Gets a short code, requires long_url, returns str short_code
+  global store_dict
   for url_dict in store_dict['urls']:
     for key in url_dict:
       if url_dict[key] == long_url:
@@ -74,21 +80,23 @@ def random_url(): # Returns unique str short_code
   return random_code_encoded
 
 def create_url(long_url): # Creates short links, requires long_url, returns str short_code
+  global store_dict
   if long_url_exists(long_url):
     return get_short_url(long_url)
   created_short_url = random_url()
-  urls_dict['urls'].append({created_short_url: long_url})
+  store_dict['urls'].append({created_short_url: long_url})
   save_urls_file()
   return created_short_url
 
 def create_custom_url(short_url, long_url): # Creates custom short links, requires short_code, long_url, returns success/fail
+  global store_dict
   global validChars
   if short_code_exists(short_url) or short_url == "new":
     return 'That url is taken'
   for letter in short_url:
     if not letter in validChars:
       return 'Invalid short code'
-  urls_dict['urls'].append({short_url: long_url})
+  store_dict['urls'].append({short_url: long_url})
   save_urls_file()
   return 'Url successfully created\n{} ==> {}'.format(short_url, long_url)
 
