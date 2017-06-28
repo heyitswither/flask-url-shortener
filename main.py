@@ -101,6 +101,12 @@ def create_custom_url(request, short_url, long_url): # Creates custom short link
   save_urls_file()
   return Markup('Url successfully created\n<a href="{0}">{0}</a> ==> <a href = "{1}">{1}</a>'.format(request.url_root + short_url, long_url))
 
+@app.before_request
+def before_request():
+  if request.url.startswith('http://'):
+    url = request.url.replace('http://', 'https://', 1)
+    return redirect(url, code=301)
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
   if request.method == 'GET':
@@ -127,13 +133,6 @@ def short_url_handler(short_url_request):
   if not short_code_exists(short_url_request):
     return abort(404)
   return redirect(get_long_url(short_url_request))
-
-@app.before_request
-def before_request():
-  if request.url.startswith('http://'):
-    url = request.url.replace('http://', 'https://', 1)
-    code = 301
-    return redirect(url, code=code)
 
 if __name__ == '__main__':
   context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
