@@ -2,6 +2,7 @@ from flask import Flask, abort, redirect, render_template, render_template_strin
 import json
 import random
 import ssl
+import asyncio
 
 app = Flask(__name__)
 httpapp = Flask(__name__)
@@ -149,5 +150,6 @@ if __name__ == '__main__':
   context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
   context.load_cert_chain('/etc/letsencrypt/live/vps2.heyitswither.ml/cert.pem', '/etc/letsencrypt/live/vps2.heyitswither.ml/privkey.pem')
   urls_file_exists()
-  app.run(debug=True, host='0.0.0.0', port=443, ssl_context=context)
-  httpapp.run(debu=True, host='0.0.0.0', port=80)
+  loop = asyncio.get_event_loop()
+  loop.run_until_complete(asyncio.gather(app.run(debug=True, host='0.0.0.0', port=443, ssl_context=context), httpapp.run(debug=True, host='0.0.0.0', port=80)))
+  loop.close()
