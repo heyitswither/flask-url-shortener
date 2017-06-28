@@ -115,7 +115,7 @@ def index():
       new_url_response = 'There was an error'
     return render_template('new.html', new_url_response=new_url_response)
 
-@app.route('/<short_url>')
+@app.route('/<short_url_request>')
 def short_url_handler(short_url_request):
   if not short_code_exists(short_url_request):
     return abort(404)
