@@ -105,7 +105,7 @@ def create_custom_url(request, short_url, long_url): # Creates custom short link
 def before_request():
   if request.url.startswith('http://'):
     url = request.url.replace('http://', 'https://', 1)
-    return redirect(url, code=301)
+    return redirect(url)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
