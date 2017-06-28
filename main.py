@@ -122,7 +122,17 @@ def before_request():
 @app.route('/', methods=['GET', 'POST'])
 def index():
   if request.method == 'GET':
-    return render_template('index.html')
+    if 'previewsEnabled' in request.cookies:
+      if request.cookies.get('previewsEnabled') == "true":
+        previews_status = "on"
+        opposite_status = "off"
+      elif request.cookies.get('previewsEnabled') == "false":
+        previews_status = "off"
+        opposite_status = "on"
+    else:
+      previews_status = "off"
+      opposite_status = "on"
+    return render_template('index.html', previews_status=previews_status, opposite_status=opposite_status)
   elif request.method == 'POST':
     custom_url = dict(request.form)['custom_url'][0]
     long_url = dict(request.form)['long_url'][0]
