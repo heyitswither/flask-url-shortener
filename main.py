@@ -88,7 +88,7 @@ def create_url(long_url): # Creates short links, requires long_url, returns str 
   save_urls_file()
   return created_short_url
 
-def create_custom_url(short_url, long_url): # Creates custom short links, requires short_code, long_url, returns success/fail
+def create_custom_url(request, short_url, long_url): # Creates custom short links, requires short_code, long_url, returns success/fail
   global store_dict
   global validChars
   if short_code_exists(short_url):
@@ -98,7 +98,7 @@ def create_custom_url(short_url, long_url): # Creates custom short links, requir
       return 'Invalid short code'
   store_dict['urls'].append({short_url: long_url})
   save_urls_file()
-  return 'Url successfully created\n{} ==> {}'.format(short_url, long_url)
+  return 'Url successfully created\n{} ==> {}'.format(request.url_root + short_url, long_url)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -108,11 +108,11 @@ def index():
     custom_url = dict(request.form)['custom_url'][0]
     long_url = dict(request.form)['long_url'][0]
     if not custom_url == "":
-      new_url_response = create_custom_url(custom_url, long_url)
+      new_url_response = create_custom_url(request, custom_url, long_url)
     elif custom_url == "":
       new_url_response = request.url_root + create_url(long_url)
-    else:
-      new_url_response = 'There was an error'
+    elif long_url == "":
+      new_url_response = 'You cannot leave the long URL field empty!'
     return render_template('new.html', new_url_response=new_url_response)
 
 @app.route('/<short_url_request>')
