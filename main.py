@@ -114,7 +114,6 @@ def short_url_handler(short_url):
     return abort(404)
   redirect(get_long_url(short_url))
 
-
 if __name__ == '__main__':
   urls_file_exists()
   app.run(debug=True, host='0.0.0.0', port=80)
