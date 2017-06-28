@@ -32,13 +32,13 @@ def urls_file_exists(): # Imports storage file, or creates in not found
   except FileNotFoundError:
     with open('storage.json', 'w+') as fileOut:
       store_temp = {"urls": []}
-      json.dump(store_temp, fileOut, indent=2, sort_keyes=True)
+      json.dump(store_temp, fileOut, indent=2, sort_keys=True)
       store_dict = store_temp
 
 def save_urls_file(): # Saves storage dict to file
   global store_dict
   with open('urls.json', 'w') as fileOut:
-    json.dump(store_dict, fileOut, indent=2, sort_keyes=True)
+    json.dump(store_dict, fileOut, indent=2, sort_keys=True)
 
 def short_code_exists(short_code): # Check if a short code exists, requires short_code, returns bool
   global store_dict
