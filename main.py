@@ -179,7 +179,7 @@ def short_url_handler(short_url_request):
   elif "previewsEnabled" in request.cookies and request.cookies.get('previewsEnabled') == "true":
     new_url_response = Markup('<a href="{0}">{0}</a> ==> <a href="{1}">{1}</a>'.format(request.url_root + short_url_request, get_long_url(short_url_request)))
     return render_template('new.html', new_url_response=new_url_response)
-    resp = make_response(render_template('new.html', new_url_response=new_url_response))
+    resp = make_response(render_template('new.html', new_url_response=new_url_response, previews_status='on', opposite_status='off'))
     resp.set_cookie('previewsEnabled', 'true')
   else:
     return redirect(get_long_url(short_url_request))
