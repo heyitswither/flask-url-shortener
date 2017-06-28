@@ -7,7 +7,7 @@ def http_before_request():
   url = request.url.replace('http://', 'https://', 1)
   return redirect(url)
 
-@httpapp.route
+@httpapp.route('/')
 def http_index():
   url = request.url.replace('http://', 'https://', 1)
   return redirect(url)
