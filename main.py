@@ -176,7 +176,7 @@ def index():
 def short_url_handler(short_url_request):
   if not short_code_exists(short_url_request):
     return abort(404)
-  elif "previewsEnabled" in request.cookies and response.cookies.get('previewsEnabled') == "true":
+  elif "previewsEnabled" in request.cookies and request.cookies.get('previewsEnabled') == "true":
     new_url_response = Markup('<a href="{0}">{0}</a> ==> <a href="{1}">{1}</a>'.format(request.url_root + short_url_request, get_long_url(short_url_request)))
     return render_template('new.html', new_url_response=new_url_response)
     resp = make_response(render_template('new.html', new_url_response=new_url_response))
