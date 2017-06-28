@@ -114,8 +114,11 @@ def index():
       new_url_response = 'You cannot leave the long URL field empty!'
     elif not custom_url == "":
       new_url_response = create_custom_url(request, custom_url, long_url)
+      print("New URL {} ==> {}".format(custom_url, long_url))
     elif custom_url == "":
-      new_url_response = Markup('<a href="{0}">{0}</a>'.format(request.url_root + create_url(long_url)))
+      new_url = create_url(long_url)
+      new_url_response = Markup('<a href="{0}">{0}</a> ==> <a href="{1}">{1}</a>'.format(request.url_root + new_url, long_url))
+      print("New URL {} ==> {}".format(new_url, long_url))
     return render_template('new.html', new_url_response=new_url_response)
 
 @app.route('/<short_url_request>')
