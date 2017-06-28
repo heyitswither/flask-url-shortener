@@ -1,6 +1,6 @@
 from flask import Flask, redirect
 
-app = Flask(__name__)
+httpapp = Flask(__name__)
 
 @httpapp.before_request
 def http_before_request():
