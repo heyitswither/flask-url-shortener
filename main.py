@@ -128,6 +128,13 @@ def short_url_handler(short_url_request):
     return abort(404)
   return redirect(get_long_url(short_url_request))
 
+@app.before_request
+def before_request():
+  if request.url.startswith('http://'):
+    url = request.url.replace('http://', 'https://', 1)
+    code = 301
+    return redirect(url, code=code)
+
 if __name__ == '__main__':
   context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
   context.load_cert_chain('/etc/letsencrypt/live/vps2.heyitswither.ml/cert.pem', '/etc/letsencrypt/live/vps2.heyitswither.ml/privkey.pem')
