@@ -4,10 +4,21 @@ import random
 import ssl
 import asyncio
 
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+
 app = Flask(__name__)
-validChars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+validChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_'
 
 BASE62 = "23456789abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
+
+def valid_url(url):
+  try:
+    URLValidator()(url)
+  except ValidationError:
+    return False
+  else:
+    return True
 
 def encode(num, alphabet=BASE62):
   """Encode a positive number in Base X
@@ -120,13 +131,19 @@ def index():
     elif long_url == "" and not short_code_exists(custom_url):
       new_url_response = 'You cannot leave the long URL field empty!'
     elif not custom_url == "":
-      new_url_response = create_custom_url(request, custom_url, long_url)
-      if not short_code_exists(custom_url):
-        print("New URL {} ==> {}".format(custom_url, long_url))
+      if not valid_url(long_url):
+        new_url_response = 'Invalid long URL'
+      else:
+        new_url_response = create_custom_url(request, custom_url, long_url)
+        if not short_code_exists(custom_url):
+          print("New URL {} ==> {}".format(custom_url, long_url))
     elif custom_url == "":
-      new_url = create_url(long_url)
-      new_url_response = Markup('<a href="{0}">{0}</a> ==> <a href="{1}">{1}</a>'.format(request.url_root + new_url, long_url))
-      print("New URL {} ==> {}".format(new_url, long_url))
+      if not valid_url(long_url):
+        new_url_response = 'Invalid long URL'
+      else:
+        new_url = create_url(long_url)
+        new_url_response = Markup('<a href="{0}">{0}</a> ==> <a href="{1}">{1}</a>'.format(request.url_root + new_url, long_url))
+        print("New URL {} ==> {}".format(new_url, long_url))
     return render_template('new.html', new_url_response=new_url_response)
 
 @app.route('/<short_url_request>')
