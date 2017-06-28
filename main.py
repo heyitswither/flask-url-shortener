@@ -110,7 +110,7 @@ def index():
     if not custom_url == "":
       new_url_response = create_custom_url(custom_url, long_url)
     elif custom_url == "":
-      new_url_response = create_url(long_url)
+      new_url_response = request.url_root + create_url(long_url)
     else:
       new_url_response = 'There was an error'
     return render_template('new.html', new_url_response=new_url_response)
