@@ -91,7 +91,7 @@ def create_url(long_url): # Creates short links, requires long_url, returns str 
 def create_custom_url(short_url, long_url): # Creates custom short links, requires short_code, long_url, returns success/fail
   global store_dict
   global validChars
-  if short_code_exists(short_url) or short_url == "new":
+  if short_code_exists(short_url):
     return 'That url is taken'
   for letter in short_url:
     if not letter in validChars:
@@ -118,7 +118,7 @@ def index():
 @app.route('/<short_url>')
 def short_url_handler(short_url):
   if not short_code_exists(short_url):
-    print(short_url)
+    print(type(short_url).__name__)
     return abort(404)
   return redirect(get_long_url(short_url))
 
