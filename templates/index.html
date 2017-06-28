@@ -2,15 +2,16 @@
 <html>
   <head>
     <title>Simple URL Shortener</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <h2>Simple URL Shortener</h1><hr><br><br>
+    <h2>Simple URL Shortener</h1><hr><br>
     <form action="/" method="post">
       <b>Custom URL (Optional)</b><br>
-      <input type="text" name="custom_url"><br>
+      <input type="text" name="custom_url"><br><br>
       <b>Long URL</b><br>
-      <input type="text" name="long_url"><br>
+      <input type="text" name="long_url"><br><br>
       <input type="submit">
     </form><br><br>
     <a href="/preview-toggle/">Previews are currently {{ previews_status }}, click here to turn them {{ opposite_status }}</a>
