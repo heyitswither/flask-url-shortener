@@ -203,17 +203,17 @@ def short_url_preview(short_url_request):
 
 @app.route('/preview-toggle/')
 def preview_toggle():
-  if "previewsEnabled" in request.cookies and response.cookies.get('previewsEnabled') == "true":
+  if "previewsEnabled" in request.cookies and request.cookies.get('previewsEnabled') == "true":
     new_url_response = 'Previews have been disabled'
-    resp = make_response(render_template('new.html', new_url_response=new_url_response))
+    resp = make_response(render_template('new.html', new_url_response=new_url_response, previews_status='off', opposite_status='on'))
     resp.set_cookie('previewsEnabled', 'false')
-  elif "previewsEnabled" in request.cookies and response.cookies.get('previewsEnabled') == "false":
+  elif "previewsEnabled" in request.cookies and request.cookies.get('previewsEnabled') == "false":
     new_url_response = 'Previews have been enabled'
-    resp = make_response(render_template('new.html', new_url_response=new_url_response))
+    resp = make_response(render_template('new.html', new_url_response=new_url_response, previews_status='on', opposite_status='off'))
     resp.set_cookie('previewsEnabled', 'true')
   else:
     new_url_response = 'Previews have been enabled'
-    resp = make_response(render_template('new.html', new_url_response=new_url_response))
+    resp = make_response(render_template('new.html', new_url_response=new_url_response, previews_status='on', opposite_status='off'))
     resp.set_cookie('previewsEnabled', 'true')
   return resp
 
