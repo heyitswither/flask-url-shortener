@@ -106,7 +106,7 @@ def new_url_page():
     new_url_response = create_url(long_url)
   else:
     new_url_response = 'There was an error'
-  return render_template_string('new.html')
+  return render_template_string('new.html', new_url_response=new_url_response)
 
 @app.route('/<short_url>')
 def short_url_handler(short_url):
