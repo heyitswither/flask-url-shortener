@@ -4,7 +4,9 @@
 
   </head>
   <body>
-    <b> {{ new_url_response|safe }} </b><br>
+    {% autoescape false %}
+    <b> {{ new_url_response }} </b><br>
     <a href="/">Go back to the previous page</a>
+    {% endautoescape %}
   </body>
 </html>
