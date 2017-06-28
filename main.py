@@ -120,7 +120,7 @@ def index():
       new_url_response = 'You cannot leave the long URL field empty!'
     elif not custom_url == "":
       new_url_response = create_custom_url(request, custom_url, long_url)
-      if not short_url_exists(custom_url):
+      if not short_code_exists(custom_url):
         print("New URL {} ==> {}".format(custom_url, long_url))
     elif custom_url == "":
       new_url = create_url(long_url)
