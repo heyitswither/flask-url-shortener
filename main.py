@@ -112,7 +112,7 @@ def index():
     elif not custom_url == "":
       new_url_response = create_custom_url(request, custom_url, long_url)
     elif custom_url == "":
-      new_url_response = "<a href="{}"></a>".format(request.url_root + create_url(long_url))
+      new_url_response = '<a href="{}"></a>'.format(request.url_root + create_url(long_url))
     return render_template('new.html', new_url_response=new_url_response)
 
 @app.route('/<short_url_request>')
