@@ -98,7 +98,7 @@ def create_custom_url(request, short_url, long_url): # Creates custom short link
       return 'Invalid short code'
   store_dict['urls'].append({short_url: long_url})
   save_urls_file()
-  return 'Url successfully created\n{} ==> {}'.format(request.url_root + short_url, long_url)
+  return 'Url successfully created\n<a href="{}"></a> ==> <a href = "{}"></a>'.format(request.url_root + short_url, long_url)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -112,7 +112,7 @@ def index():
     elif not custom_url == "":
       new_url_response = create_custom_url(request, custom_url, long_url)
     elif custom_url == "":
-      new_url_response = request.url_root + create_url(long_url)
+      new_url_response = "<a href="{}"></a>".format(request.url_root + create_url(long_url))
     return render_template('new.html', new_url_response=new_url_response)
 
 @app.route('/<short_url_request>')
