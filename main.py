@@ -117,11 +117,9 @@ def index():
 
 @app.route('/<short_url>')
 def short_url_handler(short_url):
-  if short_url == "new":
-    return
   if not short_code_exists(short_url):
     return abort(404)
-  redirect(get_long_url(short_url))
+  return redirect(get_long_url(short_url))
 
 if __name__ == '__main__':
   urls_file_exists()
