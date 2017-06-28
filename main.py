@@ -118,6 +118,7 @@ def index():
 @app.route('/<short_url>')
 def short_url_handler(short_url):
   if not short_code_exists(short_url):
+    print(short_url)
     return abort(404)
   return redirect(get_long_url(short_url))
 
