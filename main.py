@@ -119,7 +119,7 @@ def index():
 def short_url_handler(short_url_request):
   if not short_code_exists(short_url_request):
     return abort(404)
-  return redirect(get_long_url(short_url))
+  return redirect(get_long_url(short_url_request))
 
 if __name__ == '__main__':
   urls_file_exists()
