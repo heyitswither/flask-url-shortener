@@ -102,9 +102,9 @@ def create_custom_url(short_url, long_url): # Creates custom short links, requir
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-  if request.method == 'get':
+  if request.method == 'GET':
     return render_template('index.html')
-  elif request.method == 'post':
+  elif request.method == 'POST':
     custom_url = dict(request.form)['custom_url'][0]
     long_url = dict(request.form)['long_url'][0]
     if not custom_url == "":
