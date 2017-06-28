@@ -107,12 +107,12 @@ def index():
   elif request.method == 'POST':
     custom_url = dict(request.form)['custom_url'][0]
     long_url = dict(request.form)['long_url'][0]
-    if not custom_url == "":
+    if long_url == "":
+      new_url_response = 'You cannot leave the long URL field empty!'
+    elif not custom_url == "":
       new_url_response = create_custom_url(request, custom_url, long_url)
     elif custom_url == "":
       new_url_response = request.url_root + create_url(long_url)
-    elif long_url == "":
-      new_url_response = 'You cannot leave the long URL field empty!'
     return render_template('new.html', new_url_response=new_url_response)
 
 @app.route('/<short_url_request>')
