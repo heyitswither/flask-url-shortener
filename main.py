@@ -1,4 +1,4 @@
-from flask import Flask, abort, redirect, render_template, render_template_string, request, Markup
+from flask import Flask, abort, redirect, render_template, render_template_string, request, Markup, make_response
 import json
 import random
 import ssl
@@ -131,6 +131,8 @@ def index():
     elif long_url == "" and not short_code_exists(custom_url):
       new_url_response = 'You cannot leave the long URL field empty!'
     elif not custom_url == "":
+      if not long_url.startswith('http://') or not long_url.startswith('https://'):
+        long_url = "http://" + long_url
       if not valid_url(long_url):
         new_url_response = 'Invalid long URL'
       else:
@@ -138,19 +140,72 @@ def index():
         if not short_code_exists(custom_url):
           print("New URL {} ==> {}".format(custom_url, long_url))
     elif custom_url == "":
+      if not long_url.startswith('http://') or not long_url.startswith('https://'):
+        long_url = "http://" + long_url
       if not valid_url(long_url):
+        new_url_response = 'Invalid long URL'
+      elif long_url.split('/')[2] == '/'.join(request.url_root.split('/')[:3]):
         new_url_response = 'Invalid long URL'
       else:
         new_url = create_url(long_url)
         new_url_response = Markup('<a href="{0}">{0}</a> ==> <a href="{1}">{1}</a>'.format(request.url_root + new_url, long_url))
         print("New URL {} ==> {}".format(new_url, long_url))
-    return render_template('new.html', new_url_response=new_url_response)
+    if 'previewsEnabled' in request.cookies:
+      if request.cookies.get('previewsEnabled') == "true":
+        previews_status = "on"
+        opposite_status = "off"
+      elif request.cookies.get('previewsEnabled') == "false":
+        previews_status = "off"
+        opposite_status = "on"
+    else:
+      previews_status = "off"
+      opposite_status = "on"
+    return render_template('new.html', new_url_response=new_url_response, previews_status=previews_status, opposite_status=opposite_status)
 
 @app.route('/<short_url_request>')
 def short_url_handler(short_url_request):
   if not short_code_exists(short_url_request):
     return abort(404)
-  return redirect(get_long_url(short_url_request))
+  elif "previewsEnabled" in request.cookies and response.cookies.get('previewsEnabled') == "true":
+    new_url_response = Markup('<a href="{0}">{0}</a> ==> <a href="{1}">{1}</a>'.format(request.url_root + short_url_request, get_long_url(short_url_request)))
+    return render_template('new.html', new_url_response=new_url_response)
+    resp = make_response(render_template('new.html', new_url_response=new_url_response))
+    resp.set_cookie('previewsEnabled', 'true')
+  else:
+    return redirect(get_long_url(short_url_request))
+
+@app.reoute('/preview/<short_url_request>')
+def short_url_preview(short_url_request):
+  if not short_code_exists(short_url_request):
+    return abort(404)
+  new_url_response = Markup('<a href="{0}">{0}</a> ==> <a href="{1}">{1}</a>'.format(request.url_root + short_url_request, get_long_url(short_url_request)))
+  if 'previewsEnabled' in request.cookies:
+    if request.cookies.get('previewsEnabled') == "true":
+      previews_status = "on"
+      opposite_status = "off"
+    elif request.cookies.get('previewsEnabled') == "false":
+      previews_status = "off"
+      opposite_status = "on"
+  else:
+    previews_status = "off"
+    opposite_status = "on"
+  return render_template('new.html', new_url_response=new_url_response, previews_status=previews_status, opposite_status=opposite_status)
+
+@app.route('/preview-toggle/')
+def preview_toggle():
+  if "previewsEnabled" in request.cookies and response.cookies.get('previewsEnabled') == "true":
+    new_url_response = 'Previews have been disabled'
+    resp = make_response(render_template('new.html', new_url_response=new_url_response))
+    resp.set_cookie('previewsEnabled', 'false')
+  elif "previewsEnabled" in request.cookies and response.cookies.get('previewsEnabled') == "false":
+    new_url_response = 'Previews have been enabled'
+    resp = make_response(render_template('new.html', new_url_response=new_url_response))
+    resp.set_cookie('previewsEnabled', 'true')
+  else:
+    new_url_response = 'Previews have been enabled'
+    resp = make_response(render_template('new.html', new_url_response=new_url_response))
+    resp.set_cookie('previewsEnabled', 'true')
+  return resp
 
 if __name__ == '__main__':
   context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
