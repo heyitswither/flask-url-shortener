@@ -61,7 +61,7 @@ def get_long_url(short_code): # Gets a long url, requires short_code, returns st
   for url_dict in store_dict['urls']:
     for key in url_dict:
       if key == short_code:
-        return key[short_code]
+        return url_dict[key]
   return 'Url not found'
 
 def get_short_url(long_url): # Gets a short code, requires long_url, returns str short_code
