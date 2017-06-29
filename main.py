@@ -178,7 +178,7 @@ def index():
       else:
         new_url = create_url(long_url)
         print("New URL {} ==> {}".format(new_url, long_url))
-    return render_template('new.html', new_url=request.url_root + new_url, old_url=get_long_url(short_url_request), previews_status=previews_status, opposite_status=opposite_status)
+    return render_template('new.html', new_url=request.url_root + new_url, old_url=get_long_url(new_url), previews_status=previews_status, opposite_status=opposite_status)
 
 @app.route('/<short_url_request>')
 def short_url_handler(short_url_request):
