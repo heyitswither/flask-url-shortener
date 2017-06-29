@@ -194,7 +194,7 @@ def short_url_preview(short_url_request):
   else:
     previews_status = "off"
     opposite_status = "on"
-  return render_template('previews.html', response='This URL redirects to {}'.format(get_long_url(short_url_request)), previews_status=previews_status, opposite_status=opposite_status)
+  return render_template('previews.html', response=Markup('<b>This short URL redirects to the following URL<br><a href="{0}">{0}</a>'.format(get_long_url(short_url_request))), previews_status=previews_status, opposite_status=opposite_status)
 
 @app.route('/preview-toggle/')
 def preview_toggle():
