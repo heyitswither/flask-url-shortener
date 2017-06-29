@@ -6,16 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <h2>Simple URL Shortener</h1><hr><br>
-    <b>Created new URL with length {{ new_url|length }}</b><br>
-    <a href="{{ new_url }}">{{ new_url }}</a><br><br>
-    <b>{{ old_url|length - new_url|length }} keystrokes saved from old URL of length {{ old_url|length }}</b><br>
-    <a href="{{ old_url }}">{{ old_url }}</a><br><br>
-    <a href="/">Go back to the previous page</a><br><br>
-    {% if previews_status == 'on' %}
-    <a href="/preview-toggle/">Previews are currently on, click here to turn them off</a>
-    {% elif previews_status == 'off' %}
-    <a href="/preview-toggle/">Previews are currently off, click here to turn them on</a>
-    {% endif %}
+    <center>
+      <h2>Simple URL Shortener</h1><hr><br>
+      <b>Created new URL with length {{ new_url|length }}</b><br>
+      <a href="{{ new_url }}">{{ new_url }}</a><br><br>
+      <b>{{ old_url|length - new_url|length }} keystrokes saved from old URL of length {{ old_url|length }}</b><br>
+      <a href="{{ old_url }}">{{ old_url }}</a><br><br>
+      <a href="/">Go back to the previous page</a><br><br>
+      {% if previews_status == 'on' %}
+      <a href="/preview-toggle/">Previews are currently on, click here to turn them off</a>
+      {% elif previews_status == 'off' %}
+      <a href="/preview-toggle/">Previews are currently off, click here to turn them on</a>
+      {% endif %}
+    </center>
   </body>
 </html>
