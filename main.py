@@ -164,7 +164,7 @@ def index():
         print("New URL {} ==> {}".format(custom_url, long_url))
         new_url = custom_url
       else:
-        reponse = 'Short code is invalid or already in use'
+        response = 'Short code is invalid or already in use'
         return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
     elif custom_url == "":
       new_url = create_url(long_url)
