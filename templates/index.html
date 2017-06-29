@@ -9,7 +9,7 @@
     <h2>Simple URL Shortener</h1><hr><br>
     <form action="/" method="post">
       <b>Custom URL (Optional)</b><br>
-      <input type="text" name="custom_url"><br><br>
+      {{ request }}/<input type="text" name="custom_url"><br><br>
       <b>Long URL</b><br>
       <input type="text" name="long_url" required><br><br>
       <input type="submit">

@@ -132,7 +132,7 @@ def before_request():
 def index():
   if request.method == 'GET':
     previews_status = get_previews(request)
-    return render_template('index.html', previews_status=previews_status)
+    return render_template('index.html', previews_status=previews_status, request=request.url_root)
   elif request.method == 'POST':
     custom_url = dict(request.form)['custom_url'][0]
     long_url = dict(request.form)['long_url'][0]
