@@ -7,9 +7,9 @@
   </head>
   <body>
     <h2>Simple URL Shortener</h1><hr><br>
-    Created new URL with length {{ len(new_url) }}<br>
+    Created new URL with length {{ new_url|length }}<br>
     <b> {{ new_url }} </b><br><br>
-    {{ len(old_url) - len(new_url) }} keystrokes saved with new URL of length {{ len(new_url) }}<br>
+    {{ old_url|length - new_url|length }} keystrokes saved with new URL of length {{ new_url|length }}<br>
     <b> {{ old_url }} </b><br><br>
     <a href="/">Go back to the previous page</a><br><br>
     <a href="/preview-toggle/">Previews are currently {{ previews_status }}, click here to turn them {{ opposite_status }}</a>
