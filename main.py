@@ -136,6 +136,15 @@ def index():
   elif request.method == 'POST':
     custom_url = dict(request.form)['custom_url'][0]
     long_url = dict(request.form)['long_url'][0]
+    if not long_url.startswith('http://') or not long_url.startswith('https://'):
+      long_url = "http://" + long_url
+    if not valid_url(long_url):
+      response = 'Invalid long URL'
+      return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
+    elif long_url.split('/')[2] == '/'.join(request.url_root.split('/')[:3]):
+      response = 'Invalid long URL'
+      return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
+
     if 'previewsEnabled' in request.cookies:
       if request.cookies.get('previewsEnabled') == "true":
         previews_status = "on"
@@ -146,38 +155,20 @@ def index():
     else:
       previews_status = "off"
       opposite_status = "on"
-    if long_url == "" and not short_code_exists(custom_url):
+
+    if long_url == "":
       response = 'You cannot leave the long URL field empty!'
       return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
     elif not custom_url == "":
-      if not long_url.startswith('http://') or not long_url.startswith('https://'):
-        long_url = "http://" + long_url
-      if not valid_url(long_url):
-        response = 'Invalid long URL'
-        return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
+      if create_custom_url(request, custom_url, long_url):
+        print("New URL {} ==> {}".format(custom_url, long_url))
+        new_url = custom_url
       else:
-        if short_code_exists(custom_url):
-          response = 'That short URL is already taken'
-          return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
-        else:
-          if create_custom_url(request, custom_url, long_url):
-            print("New URL {} ==> {}".format(custom_url, long_url))
-            new_url = custom_url
-          else:
-            reponse = 'Short code is invalid or already in use'
-            return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
+        reponse = 'Short code is invalid or already in use'
+        return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
     elif custom_url == "":
-      if not long_url.startswith('http://') or not long_url.startswith('https://'):
-        long_url = "http://" + long_url
-      if not valid_url(long_url):
-        response = 'Invalid long URL'
-        return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
-      elif long_url.split('/')[2] == '/'.join(request.url_root.split('/')[:3]):
-        response = 'Invalid long URL'
-        return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
-      else:
-        new_url = create_url(long_url)
-        print("New URL {} ==> {}".format(new_url, long_url))
+      new_url = create_url(long_url)
+      print("New URL {} ==> {}".format(new_url, long_url))
     return render_template('new.html', new_url=request.url_root + new_url, old_url=get_long_url(new_url), previews_status=previews_status, opposite_status=opposite_status)
 
 @app.route('/<short_url_request>')
@@ -203,7 +194,7 @@ def short_url_preview(short_url_request):
   else:
     previews_status = "off"
     opposite_status = "on"
-  return render_template('new.html', new_url=request.url_root + short_url_request, old_url=get_long_url(short_url_request), previews_status=previews_status, opposite_status=opposite_status)
+  return render_template('previews.html', response='This URL redirects to {}'.format(get_long_url(short_url_request)), previews_status=previews_status, opposite_status=opposite_status)
 
 @app.route('/preview-toggle/')
 def preview_toggle():
