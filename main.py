@@ -147,7 +147,7 @@ def index():
       previews_status = "off"
       opposite_status = "on"
 
-    if not long_url.startswith('http://') or not long_url.startswith('https://'):
+    if not long_url.startswith('http://') and not long_url.startswith('https://'):
       long_url = "http://" + long_url
     if not valid_url(long_url):
       response = 'Invalid long URL'
