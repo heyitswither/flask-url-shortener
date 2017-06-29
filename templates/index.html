@@ -16,7 +16,8 @@
     </form><br><br>
     {% if previews_status == 'on' %}
     <a href="/preview-toggle/">Previews are currently on, click here to turn them off</a>
-    {% if previews_status == 'off' %}
+    {% elif previews_status == 'off' %}
     <a href="/preview-toggle/">Previews are currently off, click here to turn them on</a>
+    {% endif %}
   </body>
 </html>
