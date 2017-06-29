@@ -11,9 +11,12 @@
       <b>Custom URL (Optional)</b><br>
       <input type="text" name="custom_url"><br><br>
       <b>Long URL</b><br>
-      <input type="text" name="long_url"><br><br>
+      <input type="text" name="long_url" required><br><br>
       <input type="submit">
     </form><br><br>
-    <a href="/preview-toggle/">Previews are currently {{ previews_status }}, click here to turn them {{ opposite_status }}</a>
+    {% if previews_status == 'on' %}
+    <a href="/preview-toggle/">Previews are currently on, click here to turn them off</a>
+    {% if previews_status == 'off' %}
+    <a href="/preview-toggle/">Previews are currently off, click here to turn them on</a>
   </body>
 </html>

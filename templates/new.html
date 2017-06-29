@@ -12,6 +12,9 @@
     <b>{{ old_url|length - new_url|length }} keystrokes saved from old URL of length {{ old_url|length }}</b><br>
     <a href="{{ old_url }}">{{ old_url }}</a><br><br>
     <a href="/">Go back to the previous page</a><br><br>
-    <a href="/preview-toggle/">Previews are currently {{ previews_status }}, click here to turn them {{ opposite_status }}</a>
+    {% if previews_status == 'on' %}
+    <a href="/preview-toggle/">Previews are currently on, click here to turn them off</a>
+    {% if previews_status == 'off' %}
+    <a href="/preview-toggle/">Previews are currently off, click here to turn them on</a>
   </body>
 </html>
