@@ -136,15 +136,6 @@ def index():
   elif request.method == 'POST':
     custom_url = dict(request.form)['custom_url'][0]
     long_url = dict(request.form)['long_url'][0]
-    if not long_url.startswith('http://') or not long_url.startswith('https://'):
-      long_url = "http://" + long_url
-    if not valid_url(long_url):
-      response = 'Invalid long URL'
-      return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
-    elif long_url.split('/')[2] == '/'.join(request.url_root.split('/')[:3]):
-      response = 'Invalid long URL'
-      return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
-
     if 'previewsEnabled' in request.cookies:
       if request.cookies.get('previewsEnabled') == "true":
         previews_status = "on"
@@ -155,6 +146,15 @@ def index():
     else:
       previews_status = "off"
       opposite_status = "on"
+
+    if not long_url.startswith('http://') or not long_url.startswith('https://'):
+      long_url = "http://" + long_url
+    if not valid_url(long_url):
+      response = 'Invalid long URL'
+      return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
+    elif long_url.split('/')[2] == '/'.join(request.url_root.split('/')[:3]):
+      response = 'Invalid long URL'
+      return render_template('previews.html', response=response, previews_status=previews_status, opposite_status=opposite_status)
 
     if long_url == "":
       response = 'You cannot leave the long URL field empty!'
